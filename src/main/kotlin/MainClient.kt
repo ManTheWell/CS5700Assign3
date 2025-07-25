@@ -66,6 +66,7 @@ fun app() {
                     val shipment = fetchShipmentById(trackingID.value)
                     if (shipment != null) {
                         trackedShipments[shipment.id] = shipment
+                        trackingID.value = ""
                     }
                 }
             }) {
@@ -105,7 +106,7 @@ fun app() {
                     Spacer(Modifier.height(4.dp))
 
                     Button(onClick = {
-                        trackedShipments.remove(shipment.id)
+                        trackedShipments.remove(shipmentID, shipment)
                     }) {
                         Text("Stop Tracking ${shipment.id}")
                     }

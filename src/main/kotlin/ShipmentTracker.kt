@@ -18,8 +18,4 @@ class ShipmentTracker {
     fun getShipment(id: String): Shipment? {
         return shipments[id]
     }
-
-    fun getNumUpdates(): MutableState<Int> {
-        return numUpdates
-    }
 }

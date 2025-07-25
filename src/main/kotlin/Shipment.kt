@@ -30,6 +30,7 @@ open class Shipment(private val id: String) {
         val time = parts[1]
         val readableTimestamp = convertTime(parts[1])
 
+
         status = parts[2]
 
         when (status) {
@@ -39,17 +40,30 @@ open class Shipment(private val id: String) {
                 type = parts[3]
 
                 when (type) {
-                    "express" -> {}
+                    "express" -> {
+                        if (parts[4].toInt() - parts[1].toInt() > 259200)
+                        notes.add("Expected delivery date greater than 3 day expected maximum for express shipments.")
+                    }
 
-                    "overnight" -> {}
+                    "overnight" -> {
+                        if (parts[4].toInt() - parts[1].toInt() > 86400)
+                            notes.add("Expected delivery date greater than 1 day expected maximum for overnight shipments.")
+                    }
 
-                    "bulk" -> {}
+                    "bulk" -> {
+                        if (parts[4].toInt() - parts[1].toInt() < 259200)
+                            notes.add("Expected delivery date less than 3 day expected minimum for bulk shipments.")
+                    }
                 }
+
+                expDeliveryTime = convertTime(parts.getOrNull(4) ?: "")
+                updates.add(0, "Expected delivery on $expDeliveryTime)")
             }
 
             "shipped" -> {
                 expDeliveryTime = parts.getOrNull(3) ?: ""
                 updates.add(0, "Shipped on $readableTimestamp")
+                updates.add("Expected delivery on $expDeliveryTime")
             }
 
             "location" -> {
@@ -71,7 +85,7 @@ open class Shipment(private val id: String) {
 
             "lost" -> {
                 expDeliveryTime = "none"
-                updates.add(0, "Lost on ${convertTime(readableTimestamp)}, last known location: $location")
+                updates.add(0, "Lost on $readableTimestamp, last known location: $location")
 
                 location = "unknown"
             }

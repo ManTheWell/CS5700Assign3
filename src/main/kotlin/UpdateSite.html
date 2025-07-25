@@ -34,11 +34,34 @@
 <br>
 <button onclick="sendShipment()">Send to Server</button>
 <br>
-<p>
-    Format: id, current time, status, {type/info}
-</p>
 
 <div id="response"></div>
+
+<pre>
+format: id, timestamp, status
+
+types:
+standard
+express (< 3 day)
+overnight (< 1 day)
+bulk (> 3 days)
+
+id, current time, "created", type, expected date
+
+id, current time, "shipped", expected date
+
+id, current time, "location", location
+
+id, current time, "delivered"
+
+id, current time, "delayed", new expected date
+
+id, current time, "lost"
+
+id, current time, "canceled"
+
+id, current time, "addnote", note
+</pre>
 
 <script>
     async function sendShipment() {
