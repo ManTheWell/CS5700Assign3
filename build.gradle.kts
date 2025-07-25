@@ -29,6 +29,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.11")
     testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.7")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.22")
+    testImplementation(kotlin("test"))
     implementation("io.ktor:ktor-server-cors:2.3.9")
     implementation("io.ktor:ktor-client-core:2.3.7")
     implementation("io.ktor:ktor-client-cio:2.3.7") // or OkHttp

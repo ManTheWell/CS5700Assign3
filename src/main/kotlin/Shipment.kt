@@ -20,10 +20,6 @@ open class Shipment(private val id: String) {
     private val updates = mutableListOf<String>()
     private val notes = mutableListOf<String>()
 
-    fun getID(): String {
-        return id
-    }
-
     fun parse(update: String) {
         val parts = update.split(",")
 
@@ -41,23 +37,23 @@ open class Shipment(private val id: String) {
 
                 when (type) {
                     "express" -> {
-                        if (parts[4].toInt() - parts[1].toInt() > 259200)
+                        if (parts[4].toLong() - parts[1].toLong() > 259200)
                         notes.add("Expected delivery date greater than 3 day expected maximum for express shipments.")
                     }
 
                     "overnight" -> {
-                        if (parts[4].toInt() - parts[1].toInt() > 86400)
+                        if (parts[4].toLong() - parts[1].toLong() > 86400)
                             notes.add("Expected delivery date greater than 1 day expected maximum for overnight shipments.")
                     }
 
                     "bulk" -> {
-                        if (parts[4].toInt() - parts[1].toInt() < 259200)
+                        if (parts[4].toLong() - parts[1].toLong() < 259200)
                             notes.add("Expected delivery date less than 3 day expected minimum for bulk shipments.")
                     }
                 }
 
                 expDeliveryTime = convertTime(parts.getOrNull(4) ?: "")
-                updates.add(0, "Expected delivery on $expDeliveryTime)")
+                updates.add(0, "Expected delivery on $expDeliveryTime")
             }
 
             "shipped" -> {
