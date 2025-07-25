@@ -1,6 +1,3 @@
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -78,6 +75,4 @@ fun main() = application {
     Window(onCloseRequest = ::exitApplication, title = "Shipment Tracker") {
         app()
     }
-
-    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
 }
