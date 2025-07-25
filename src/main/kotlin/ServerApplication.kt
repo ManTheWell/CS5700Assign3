@@ -9,7 +9,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.cors.routing.*
 
-val shipmentTracker = ShipmentTracker()
+private val shipmentTracker = ShipmentTracker()
 
 fun Application.module() {
     install(ContentNegotiation) {
