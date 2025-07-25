@@ -30,15 +30,12 @@
 
 <h2>Send Shipment Update</h2>
 
-<label for="shipmentInput">Shipment (comma-separated):</label>
-<textarea id="shipmentInput" placeholder="ID,ShipmentType,Date,Update"></textarea>
+<textarea id="shipmentInput" placeholder="input update here"></textarea>
 <br>
 <button onclick="sendShipment()">Send to Server</button>
 <br>
 <p>
-    Formats:<br>
-    Create: status,ID,type,date<br>
-    Update: status,ID,update,date,info
+    Format: id, current time, status, {type/info}
 </p>
 
 <div id="response"></div>

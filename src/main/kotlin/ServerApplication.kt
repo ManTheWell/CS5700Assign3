@@ -1,3 +1,5 @@
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.request.*
@@ -7,6 +9,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.cors.routing.*
 
+val shipmentTracker = ShipmentTracker()
 
 fun Application.module() {
     install(ContentNegotiation) {
@@ -22,10 +25,10 @@ fun Application.module() {
     routing {
         post("/shipment") {
             val rawInput = call.receive<String>()
+
             try {
-//                val shipment = ShipmentFactory.createFromRaw(rawInput)
-//                ShipmentRepository.addOrUpdate(shipment)
-                call.respond(HttpStatusCode.OK, "Shipment processed") //${shipment.id} processed")
+                shipmentTracker.processUpdate(rawInput)
+                call.respond(HttpStatusCode.OK, "Update processed: $rawInput")
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.BadRequest, e.message ?: "Invalid data")
             }
@@ -33,12 +36,12 @@ fun Application.module() {
 
         get("/shipment/{id}") {
             val id = call.parameters["id"]
-//            val shipment = ShipmentRepository.get(id!!)
-//            if (shipment != null) {
-//                call.respond(shipment)
-//            } else {
-//                call.respond(HttpStatusCode.NotFound, "Shipment not found")
-//            }
+            val shipment = shipmentTracker.getShipment(id!!)
+            if (shipment != null) {
+                call.respond(shipment.getData())
+            } else {
+                call.respond(HttpStatusCode.NotFound, "Shipment not found")
+            }
         }
     }
 }

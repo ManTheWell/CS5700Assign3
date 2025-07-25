@@ -5,17 +5,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.serialization.Serializable
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-open class Shipment(creationInfo: String) {
-    private lateinit var id: String
+open class Shipment(private val id: String) {
     private lateinit var type: String
-
-    init {
-        parse(creationInfo)
-    }
 
     private var status: String = ""
     private var location: String = ""
@@ -28,7 +24,7 @@ open class Shipment(creationInfo: String) {
         return id
     }
 
-    private fun parse(update: String) {
+    fun parse(update: String) {
         val parts = update.split(",")
 
         val time = parts[1]
@@ -64,7 +60,7 @@ open class Shipment(creationInfo: String) {
             }
 
             "delivered" -> {
-                updates.add(0, "Shipment delivered at $readableTimestamp}")
+                updates.add(0, "Delivered at $readableTimestamp")
             }
 
             "delayed" -> {
@@ -87,7 +83,7 @@ open class Shipment(creationInfo: String) {
                 updates.add(0, "Canceled on $readableTimestamp")
             }
 
-            "noteadded" -> {
+            "addnote" -> {
                 status = "new note"
                 notes.add(0, "($readableTimestamp): " + (parts.getOrNull(3) ?: ""))
             }
@@ -102,27 +98,7 @@ open class Shipment(creationInfo: String) {
         return formatter.format(instant)
     }
 
-    @Composable
-    fun createBox() {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .background(Color.White)
-                .padding(8.dp)
-        ) {
-            Text("ID: ${id.uppercase()}")
-            Text("Type: ${type.lowercase()}")
-            Text("Status: $status")
-            Text("")
-
-            Text("Updates:")
-            updates.forEach { Text("- $it") }
-            Text("")
-
-            Text("Notes:")
-            notes.forEach { Text("- $it") }
-            Text("")
-        }
+    fun getData(): ShipmentInfo {
+        return ShipmentInfo(id, type, status, location, expDeliveryTime, updates, notes)
     }
 }
