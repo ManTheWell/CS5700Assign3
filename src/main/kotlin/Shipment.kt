@@ -8,9 +8,15 @@ import androidx.compose.ui.unit.dp
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
 
-class Shipment(private val ID: String) {
+open class Shipment(creationInfo: String) {
+    private lateinit var id: String
+    private lateinit var type: String
+
+    init {
+        parse(creationInfo)
+    }
+
     private var status: String = ""
     private var location: String = ""
     private var expDeliveryTime: String = ""
@@ -19,52 +25,57 @@ class Shipment(private val ID: String) {
     private val notes = mutableListOf<String>()
 
     fun getID(): String {
-        return ID
+        return id
     }
 
-    private fun convertTime(epocString : String): String {
-        val epochMillis: Long = epocString.toLongOrNull() ?: return ""
-
-        val instant = Instant.ofEpochMilli(epochMillis)
-        val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy 'at' HH:mm").withZone(ZoneId.systemDefault())
-        return formatter.format(instant)
-    }
-
-    fun parse(update: String) {
+    private fun parse(update: String) {
         val parts = update.split(",")
-        status = parts[0]
-        val timestamp = convertTime(parts[2])
+
+        val time = parts[1]
+        val readableTimestamp = convertTime(parts[1])
+
+        status = parts[2]
 
         when (status) {
             "created" -> {
-                updates.add(0, "Shipment created on $timestamp")
+                updates.add(0, "Created on $readableTimestamp")
+
+                type = parts[3]
+
+                when (type) {
+                    "express" -> {}
+
+                    "overnight" -> {}
+
+                    "bulk" -> {}
+                }
             }
 
             "shipped" -> {
                 expDeliveryTime = parts.getOrNull(3) ?: ""
-                updates.add(0, "Shipment shipped on $timestamp")
+                updates.add(0, "Shipped on $readableTimestamp")
             }
 
             "location" -> {
                 status = "new location"
                 location = parts.getOrNull(3) ?: ""
 
-                updates.add(0, "New shipment location: $location on $timestamp")
+                updates.add(0, "New shipment location: $location on $readableTimestamp")
             }
 
             "delivered" -> {
-                updates.add(0, "Shipment delivered at $timestamp}")
+                updates.add(0, "Shipment delivered at $readableTimestamp}")
             }
 
             "delayed" -> {
                 expDeliveryTime = convertTime(parts.getOrNull(3) ?: "")
 
-                updates.add(0, "Shipment delayed on $timestamp, new expected delivery date $expDeliveryTime")
+                updates.add(0, "Delayed on $readableTimestamp, new expected delivery date $expDeliveryTime")
             }
 
             "lost" -> {
                 expDeliveryTime = "none"
-                updates.add(0, "Shipment lost on ${convertTime(timestamp)}, last known location: $location")
+                updates.add(0, "Lost on ${convertTime(readableTimestamp)}, last known location: $location")
 
                 location = "unknown"
             }
@@ -73,14 +84,22 @@ class Shipment(private val ID: String) {
                 location = "none"
                 expDeliveryTime = "none"
 
-                updates.add(0, "Shipment canceled on $timestamp")
+                updates.add(0, "Canceled on $readableTimestamp")
             }
 
             "noteadded" -> {
                 status = "new note"
-                notes.add(0, "($timestamp): " + (parts.getOrNull(3) ?: ""))
+                notes.add(0, "($readableTimestamp): " + (parts.getOrNull(3) ?: ""))
             }
         }
+    }
+
+    private fun convertTime(epocString : String): String {
+        val epochMillis: Long = epocString.toLongOrNull() ?: return ""
+
+        val instant = Instant.ofEpochMilli(epochMillis)
+        val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy 'at' HH:mm").withZone(ZoneId.systemDefault())
+        return formatter.format(instant)
     }
 
     @Composable
@@ -92,7 +111,8 @@ class Shipment(private val ID: String) {
                 .background(Color.White)
                 .padding(8.dp)
         ) {
-            Text("Shipment ID: ${ID.uppercase(Locale.getDefault())}")
+            Text("ID: ${id.uppercase()}")
+            Text("Type: ${type.lowercase()}")
             Text("Status: $status")
             Text("")
 

@@ -3,7 +3,7 @@ import io.ktor.client.request.*
 import io.ktor.server.testing.*
 import kotlin.test.Test
 
-class ApplicationKtTest {
+class ServerApplicationKtTest {
 
     @Test
     fun testPostShipment() = testApplication {
