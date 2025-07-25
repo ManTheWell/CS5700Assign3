@@ -27,6 +27,9 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation("ch.qos.logback:logback-classic:1.2.11")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.7")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.22")
+    implementation("io.ktor:ktor-server-cors:2.3.9")
 }
 
 compose.desktop {
